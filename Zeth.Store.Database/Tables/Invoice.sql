@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[Invoice]
+(
+	[Id] INT IDENTITY NOT NULL PRIMARY KEY, 
+    [Time] DATETIME NOT NULL,
+	[Price] DECIMAL(18,2) NOT NULL,
+	[Cost] DECIMAL(18,2) NOT NULL,
+    [Client] VARCHAR(20) NULL,
+	[Finished] SMALLINT NOT NULL
+)

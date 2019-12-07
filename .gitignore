@@ -1,0 +1,10 @@
+
+.vs/
+packages/
+Zeth.Store.Database/bin/
+Zeth.Store.Database/obj/
+Zeth.Store.Model/bin/
+Zeth.Store.Model/obj/
+Zeth.Store.Web/bin/
+Zeth.Store.Web/obj/
+Zeth.Store.Web/Content/Js/

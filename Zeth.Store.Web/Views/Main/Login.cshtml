@@ -1,0 +1,38 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    @Styles.Render("~/Css/AuthLogin")
+</head>
+<body>
+
+    <div w-view="Main" style="margin:0 auto;padding-top:100px;width:300px;">
+        <div w-class="Class.Username">
+            <label class="frm-label">Usuario:</label>
+            <input type="text" class="frm-control" w-model="Object.Username" />
+        </div>
+        <div w-class="Class.Password">
+            <label class="frm-label">Contraseña:</label>
+            <input type="password" class="frm-control" w-model="Object.Password" />
+        </div>
+        <div class="frm-row">
+            <button class="btn" style="width:100%" w-on-click="Login">Ingresar</button>
+        </div>
+    </div>
+
+    <div w-view="Datepicker" w-template>
+        <table><thead><tr><th w-on-click="PreviousYear" class="normal"><</th><th w-bind="Year" colspan="5"></th><th w-on-click="NextYear" class="normal">></th></tr><tr><th w-on-click="PreviousMonth" class="normal"><</th><th w-bind="MonthName" colspan="5"></th><th w-on-click="NextMonth" class="normal">></th></tr><tr><td w-for="DayNames:Day" w-bind="Day" style="width:12.5%"></td></tr></thead><tbody><tr w-for="Weeks:Week"><td w-for="Week:Day" w-bind="Day.Day" w-class="DayClass:Day" w-on-click="DayClick:Day" class="normal"></td></tr></tbody></table>
+    </div>
+
+    <input id="url" type="hidden" value="@Url.Content("~")" />
+    <input id="mainUrl" type="hidden" value="@Url.Action("Index", "Main")" />
+
+    @Scripts.Render("~/Js/AuthLogin")
+</body>
+</html>

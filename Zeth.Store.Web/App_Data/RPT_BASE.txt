@@ -1,0 +1,1 @@
+﻿SELECT {0},SUM(ID.[TotalPrice]) AS Venta,SUM(ID.[TotalCost]) AS Compra,SUM(ID.[Count]) AS Cantidad FROM Invoice I INNER JOIN InvoiceDetail ID ON I.[Finished] = 1 AND I.[Time] > @StartTime AND I.[Time] < @EndTime AND I.[Id] = ID.[InvoiceId] GROUP BY {1}

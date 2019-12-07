@@ -1,0 +1,3 @@
+﻿Producto\^ID.[ProductId] AS Producto\^ID.[ProductId]\^Row:ProductName
+Dia\^CONVERT(DATE, I.[Time]) AS Dia\^CONVERT(DATE, I.[Time])\^Row.Dia:DateToString
+Dia x Producto\^CONVERT(DATE, I.[Time]) AS Dia,ID.[ProductId] AS Producto\^CONVERT(DATE, I.[Time]),ID.[ProductId]\^Row.Dia:DateToString\^Row:ProductName

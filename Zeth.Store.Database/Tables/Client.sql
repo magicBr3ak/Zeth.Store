@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Client]
+(
+	[Document] VARCHAR(20) NOT NULL PRIMARY KEY, 
+    [Name] VARCHAR(200) NOT NULL, 
+    [Type] SMALLINT NOT NULL
+)

@@ -1,0 +1,530 @@
+﻿@model System.Collections.Generic.Dictionary<string, bool>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    @Styles.Render("~/Css/MainIndex")
+</head>
+<body w-view="Main" class="view-wait">
+    <div class="nav fixed" style="margin-bottom:20px;">
+        <div class="nav-icon" w-on-click="Open" w-data="Product" w-create="CreateIcon" style="background-color:#35528c;">
+            <div class="img nav-img img-product"></div>
+            <label>Productos</label>
+        </div>
+        <div class="nav-icon" w-on-click="Open" w-data="Inventory" w-create="CreateIcon">
+            <div class="img nav-img img-inventory"></div>
+            <label>Inventario</label>
+        </div>
+        <div class="nav-icon" w-on-click="Open" w-data="Sell" w-create="CreateIcon">
+            <div class="img nav-img img-bag"></div>
+            <label>Ventas</label>
+        </div>
+        <div class="nav-icon" w-on-click="Open" w-data="Report" w-create="CreateIcon">
+            <div class="img nav-img img-report"></div>
+            <label>Reportes</label>
+        </div>
+        <div class="nav-icon" w-on-click="Logout" style="float:right;">
+            <div class="img nav-img img-logout"></div>
+            <label>Salir</label>
+        </div>
+        <div class="nav-icon" w-on-click="Refresh" style="float:right;">
+            <div class="img nav-img img-refresh"></div>
+            <label>Actualizar</label>
+        </div>
+    </div>
+    <div w-view="Product" w-params="Args" w-if="Visible" class="tab">
+        <div style="margin:0 auto;width:800px;">
+            @if (Model["ProductAdd"])
+            {
+                <div style="margin-bottom: 10px;">
+                    <button class="btn" style="width:auto" w-on-click="New">Nuevo</button>
+                </div>
+            }
+            <div style="margin-bottom: 10px;">
+                <input type="text" class="frm-control" placeholder="Buscar..." w-model="Object.Filter" w-on-input="OnFilter" w-create="CreateFilter" />
+            </div>
+            <div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Código de Barras</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            @if (Model["ProductEdit"])
+                            {
+                                <th>Acciones</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr w-for="ItemsView:Row">
+                            <td w-bind="Row.Id"></td>
+                            <td w-bind="Row.Barcode"></td>
+                            <td w-bind="Row.Name"></td>
+                            <td w-bind="Row.Price:ToMoney"></td>
+                            <td w-bind="Row.Count"></td>
+                            @if (Model["ProductEdit"])
+                            {
+                                <td>
+                                    <div class="ico img-edit clickable" w-on-click="Edit:Row"></div>
+                                    @if (Model["ProductDelete"])
+                                    {
+                                        <div class="ico img-delete clickable" w-on-click="Delete:Row"></div>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div w-view="Inventory" w-params="Args" w-if="Visible" class="tab">
+        <div style="margin:0 auto;width:800px;">
+            @if (Model["InventoryAdd"])
+            {
+                <div style="margin-bottom: 10px;">
+                    <button class="btn" style="width:auto" w-on-click="New">Nuevo</button>
+                </div>
+            }
+            <div style="margin-bottom: 10px;">
+                <input type="text" class="frm-control" placeholder="Buscar..." w-model="Object.Filter" w-on-input="OnFilter" w-create="CreateFilter" />
+            </div>
+            <div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            @if (Model["InventoryEdit"])
+                            {
+                                <th>Acciones</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr w-for="ItemsView:Row">
+                            <td w-bind="Row.Time:DateToISOString"></td>
+                            <td w-bind="Row:ProductName"></td>
+                            <td w-bind="Row.Price:ToMoney"></td>
+                            <td w-bind="Row.Count"></td>
+                            @if (Model["InventoryEdit"])
+                            {
+                                <td>
+                                    <div class="ico img-delete clickable" w-on-click="Delete:Row"></div>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div w-view="Sell" w-params="Args" w-if="Visible" class="tab">
+        <div style="margin:0 auto;width:1200px;">
+            <div style="width:580px;display:inline-block;float:left;">
+                <div style="text-align:right;">
+                    <label>Fecha de venta: <label w-bind="Invoice.Time:DateToISOString"></label></label>
+                </div>
+                <div>
+                    <button class="btn" style="width:auto;" w-on-click="New">Nuevo</button>
+                    <button class="btn" style="width:auto;" w-on-click="Save">Guardar</button>
+                    <label style="float:right;font-size:1.7REM;">Total: S/. <label w-bind="TotalPrice:ToMoney"></label></label>
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Unidades</th>
+                            <th>Precio</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr w-for="Items:Row">
+                            <td w-bind="Row.DisplayName"></td>
+                            <td w-bind="Row.Count"></td>
+                            <td w-bind="Row.TotalPrice:ToMoney"></td>
+                            <td>
+                                <div class="ico img-delete clickable" w-on-click="Delete:Row"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="width:580px;display:inline-block;float:right;">
+                <div>
+                    <label class="frm-label">Buscar:<a href="#" style="float:right;" w-on-click="CleanFilter">Limpiar</a></label>
+                    <input type="text" class="frm-control" w-model="Object.Filter" w-on-input="OnFilter" w-create="CreateFilter" />
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Stock</th>
+                            <th>Precio</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr w-for="ItemsView:Row" w-on-click="Add:Row" class="clickable">
+                            <td w-bind="Row.Name"></td>
+                            <td w-bind="Row.Count"></td>
+                            <td w-bind="Row.Price:ToMoney"></td>
+                            <td>
+                                <div class="ico img-add"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div w-view="Report" w-params="Args" w-if="Visible" class="tab">
+        <div style="margin:0 auto;width:1200px;">
+            <div style="margin-bottom:20px;">
+                <div class="rpt-col">
+                    <label class="frm-label">Reporte: </label>
+                    <select class="frm-control" w-model="Object.Id" w-on-change="OnFilter">
+                        <option>Producto</option>
+                        <option>Dia</option>
+                        <option>Dia x Producto</option>
+                    </select>
+                </div>
+                <div class="rpt-col" w-datepicker>
+                    <label class="frm-label">Fecha inicio: </label>
+                    <input type="text" class="frm-control" w-model="Object.StartTime:DateToString" w-on-input="OnFilter" />
+                </div>
+                <div class="rpt-col" w-datepicker>
+                    <label class="frm-label">Fecha fin: </label>
+                    <input type="text" class="frm-control" w-model="Object.EndTime:DateToString" w-on-input="OnFilter" />
+                </div>
+            </div>
+            <div w-view="ReportTable" w-params="Args">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th w-for="Table.Headers:Row" w-bind="Row.Name"></th>
+                            <th>Ganancia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr w-for="Table.Items:Row">
+                            <td w-for="Table.Headers:Col" w-attr="Col.Bind:w-bind"></td>
+                            <td w-bind="Row:Earning"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div w-view="ProductModal" w-template>
+        <div class="content" style="width:1000px;">
+            <div class="title">
+                Formulario de Producto
+                <label w-on-click="Cancel" style="float:right;font-size:1.2REM;margin:0px 5px;">X</label>
+            </div>
+            <div class="body">
+                <div style="display:inline-block;width:100%;">
+                    <div style="display:inline-block;width:480px;float:left;">
+                        <div class="frm-row" w-if="!IsNew">
+                            <label class="frm-label">Id:</label>
+                            <input type="text" class="frm-control" w-model="Object.Id" disabled="disabled" />
+                        </div>
+                        <div class="frm-row">
+                            <label class="frm-label">Código de Barras:</label>
+                            <input type="text" class="frm-control" w-model="Object.Barcode" w-create="CreateBarcode" />
+                        </div>
+                        <div w-class="Class.Name">
+                            <label class="frm-label">Nombre:</label>
+                            <input type="text" class="frm-control" w-model="Object.Name" />
+                        </div>
+                        <div w-class="Class.DefaultName" w-if="IsNew">
+                            <label class="frm-label">Nombre Detalle:</label>
+                            <input type="text" class="frm-control" w-model="Object.DefaultName" />
+                        </div>
+                        <div w-class="Class.Price">
+                            <label class="frm-label">Precio:</label>
+                            <input type="text" class="frm-control" w-model="Object.Price" />
+                        </div>
+                    </div>
+                    <div style="display:inline-block;width:480px;float:right;">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    @if (Model["ProductEdit"])
+                                    {
+                                        <th>Acciones</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr w-for="Object.Items:Row">
+                                    <td w-bind="Row.Name"></td>
+                                    <td w-bind="Row:DetailPrice"></td>
+                                    @if (Model["ProductEdit"])
+                                    {
+                                        <td>
+                                            <div class="ico img-edit clickable" w-on-click="Edit:Row"></div>
+                                            @if (Model["ProductDelete"])
+                                            {
+                                                <div class="ico img-delete clickable" w-on-click="Delete:Row"></div>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                @if (Model["ProductAdd"])
+                {
+                    <button type="button" class="btn btn-sm" w-on-click="Add" w-if="!IsNew">Nuevo</button>
+                }
+                <button type="button" class="btn btn-sm" w-on-click="Save">Guardar</button>
+                <button type="button" class="btn btn-sm" w-on-click="Cancel">Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <div w-view="ProductDetailModal" w-template>
+        <div class="content">
+            <div class="title">
+                Formulario de Detalle
+                <label w-on-click="Cancel" style="float:right;font-size:1.2REM;margin:0px 5px;">X</label>
+            </div>
+            <div class="body">
+                <div class="frm-row">
+                    <label class="frm-label">Producto:</label>
+                    <input type="text" class="frm-control" w-bind="Object:ProductName" disabled />
+                </div>
+                <div w-class="Class.Name">
+                    <label class="frm-label">Nombre:</label>
+                    <input type="text" class="frm-control" w-model="Object.Name" w-create="CreateName" />
+                </div>
+                <div w-class="Class.Count">
+                    <label class="frm-label">Cantidad:</label>
+                    <input type="text" class="frm-control" w-model="Object.Count" />
+                </div>
+                <div w-class="Class.PricePercentage">
+                    <label class="frm-label">Precio %:</label>
+                    <input type="text" class="frm-control" w-model="Object.PricePercentage" />
+                </div>
+                <div w-class="Class.PriceOffset">
+                    <label class="frm-label">Precio Extra:</label>
+                    <input type="text" class="frm-control" w-model="Object.PriceOffset" />
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button" class="btn btn-sm" w-on-click="Save">Guardar</button>
+                <button type="button" class="btn btn-sm" w-on-click="Cancel">Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <div w-view="InventoryModal" w-template>
+        <div class="content">
+            <div class="title">
+                Formulario de Inventario
+                <label w-on-click="Cancel" style="float:right;font-size:1.2REM;margin:0px 5px;">X</label>
+            </div>
+            <div class="body">
+                <div class="frm-row" w-if="!IsNew">
+                    <label class="frm-label">Id:</label>
+                    <input type="text" class="frm-control" w-model="Object.Id" disabled="disabled" />
+                </div>
+                <div w-class="Class.ProductId" w-if="!IsNewProduct">
+                    <label class="frm-label">Producto:</label>
+                    <select class="frm-control" w-model="Object.ProductId" w-create="CreateProduct">
+                        <option value="0">Seleccione...</option>
+                        <option w-for="Products:Row" w-attr="Row.Id:value" w-bind="Row.Name"></option>
+                    </select>
+                </div>
+                <div w-class="Class.Price">
+                    <label class="frm-label">Costo:</label>
+                    <input type="text" class="frm-control" w-model="Object.Price" w-create="CreatePrice" />
+                </div>
+                <div w-class="Class.Count">
+                    <label class="frm-label">Cantidad:</label>
+                    <input type="text" class="frm-control" w-model="Object.Count" />
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button" class="btn btn-sm" w-on-click="Save">Guardar</button>
+                <button type="button" class="btn btn-sm" w-on-click="Cancel">Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <div w-view="SellModal" w-template>
+        <div class="content" style="width:800px;">
+            <div class="title">
+                Formulario de ventas
+                <label w-on-click="Cancel" style="float:right;font-size:1.2REM;margin:0px 5px;">X</label>
+            </div>
+            <div class="body">
+                <div style="display:inline-block;width:100%;">
+                    <div style="display:inline-block;width:390px;float:left;">
+                        <div class="frm-row">
+                            <label class="frm-label">Producto:</label>
+                            <input type="text" class="frm-control" w-bind="Object.DisplayName" disabled="disabled" />
+                        </div>
+                        <div class="frm-row">
+                            <label class="frm-label">Detalle:</label>
+                            <select class="frm-control" w-model="Object.DetailId" w-create="CreateDetail" w-on-change="OnDetailIdChange">
+                                <option w-for="Details:Row" w-attr="Row.Id:value" w-bind="Row.Name"></option>
+                            </select>
+                        </div>
+                        <div class="frm-row">
+                            <label class="frm-label">Precio:</label>
+                            <input type="text" class="frm-control" w-model="Object.UnitPrice:ToMoney" disabled="disabled" />
+                        </div>
+                        <div w-class="Class.Count">
+                            <label class="frm-label">Cantidad:</label>
+                            <input type="text" class="frm-control" w-model="Object.Count" w-on-input="OnCountChange" />
+                        </div>
+                        <div class="frm-row">
+                            <label class="frm-label">Precio:</label>
+                            <input type="text" class="frm-control" w-bind="Object.TotalPrice:ToMoney" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div style="display:inline-block;width:390px;float:right;user-select:none">
+                        <table class="tbl-calc">
+                            <tbody>
+                                <tr>
+                                    <td w-data="0" w-on-click="Numeric">0</td>
+                                    <td w-data="del" w-on-click="Numeric">⇦</td>
+                                    <td w-data="clr" w-on-click="Numeric">C</td>
+                                </tr>
+                                <tr>
+                                    <td w-data="7" w-on-click="Numeric">7</td>
+                                    <td w-data="8" w-on-click="Numeric">8</td>
+                                    <td w-data="9" w-on-click="Numeric">9</td>
+                                </tr>
+                                <tr>
+                                    <td w-data="4" w-on-click="Numeric">4</td>
+                                    <td w-data="5" w-on-click="Numeric">5</td>
+                                    <td w-data="6" w-on-click="Numeric">6</td>
+                                </tr>
+                                <tr>
+                                    <td w-data="1" w-on-click="Numeric">1</td>
+                                    <td w-data="2" w-on-click="Numeric">2</td>
+                                    <td w-data="3" w-on-click="Numeric">3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button" class="btn btn-sm" w-on-click="Save">Guardar</button>
+                <button type="button" class="btn btn-sm" w-on-click="Cancel">Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <div w-view="SellConfirmModal" w-template>
+        <div class="content" style="width:800px;">
+            <div class="title">
+                Confirmación de la venta
+                <label w-on-click="Cancel" style="float:right;font-size:1.2REM;margin:0px 5px;">X</label>
+            </div>
+            <div class="body">
+                <div style="display:inline-block;width:100%;">
+                    <div style="display:inline-block;width:390px;float:left;">
+                        <div style="font-size:1.5REM;margin-bottom:20px;">
+                            El monto total de la venta es S/. <label w-bind="Object.TotalPrice:ToMoney"></label>
+                        </div>
+                        <div>
+                            <div w-class="Class.MoneyInput">
+                                <label class="frm-label">Dinero del cliente:</label>
+                                <input type="text" class="frm-control" w-model="Object.MoneyInput" w-create="CreateMoneyInput" w-on-input="OnMoneyInput" />
+                            </div>
+                        </div>
+                        <div style="font-size:1.5REM;margin-top:20px;">
+                            El vuelto del cliente es S/. <label w-bind="Object.MoneyOutput:ToMoney"></label>
+                        </div>
+                    </div>
+                    <div style="display:inline-block;width:390px;float:right;user-select:none">
+                        <table class="tbl-calc">
+                            <tbody>
+                                <tr>
+                                    <td w-data="cop" w-on-click="Numeric" colspan="2">Exacto</td>
+                                    <td w-data="del" w-on-click="Numeric" colspan="2">⇦</td>
+                                </tr>
+                                <tr>
+                                    <td w-data="7" w-on-click="Numeric">7</td>
+                                    <td w-data="8" w-on-click="Numeric">8</td>
+                                    <td w-data="9" w-on-click="Numeric">9</td>
+                                    <td w-data="0" w-on-click="Numeric">0</td>
+                                </tr>
+                                <tr>
+                                    <td w-data="4" w-on-click="Numeric">4</td>
+                                    <td w-data="5" w-on-click="Numeric">5</td>
+                                    <td w-data="6" w-on-click="Numeric">6</td>
+                                    <td w-data="dot" w-on-click="Numeric">.</td>
+                                </tr>
+                                <tr>
+                                    <td w-data="1" w-on-click="Numeric">1</td>
+                                    <td w-data="2" w-on-click="Numeric">2</td>
+                                    <td w-data="3" w-on-click="Numeric">3</td>
+                                    <td w-data="clr" w-on-click="Numeric">C</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button" class="btn btn-sm" w-on-click="Save">Guardar</button>
+                <button type="button" class="btn btn-sm" w-on-click="Cancel">Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <div w-view="Datepicker" w-template>
+        <table>
+            <thead>
+                <tr>
+                    <th w-on-click="PreviousYear" class="normal"><</th>
+                    <th w-bind="Year" colspan="5"></th>
+                    <th w-on-click="NextYear" class="normal">></th>
+                </tr>
+                <tr>
+                    <th w-on-click="PreviousMonth" class="normal"><</th>
+                    <th w-bind="MonthName" colspan="5"></th>
+                    <th w-on-click="NextMonth" class="normal">></th>
+                </tr>
+                <tr>
+                    <td w-for="DayNames:Day" w-bind="Day" width="12.5%"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr w-for="Weeks:Week">
+                    <td w-for="Week:Day" w-bind="Day.Day" w-class="DayClass:Day" w-on-click="DayClick:Day" class="normal"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <input id="url" type="hidden" value="@Url.Content("~")" />
+    <input id="loginUrl" type="hidden" value="@Url.Action("Login", "Main")" />
+
+    @Scripts.Render("~/Js/MainIndex")
+</body>
+</html>

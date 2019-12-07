@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="274a8a7c-be70-4336-b405-92338fe69054" ChangeDateTime="11/23/2019 14:35:41">
+    <Property Name="ElementName" Value="[dbo].[ProductDetail].[Price]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProductDetail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PricePercentage" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a74f811d-80a0-4f58-9785-361494b7ebf8" ChangeDateTime="11/23/2019 14:35:46">
+    <Property Name="ElementName" Value="[dbo].[ProductDetail].[Perce]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProductDetail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PriceOffset" />
+  </Operation>
+</Operations>

@@ -1,0 +1,8 @@
+﻿CREATE PROCEDURE UP_LIS_INVOICE_DETAIL(
+	@Id INT
+)
+AS
+BEGIN
+	SELECT * FROM InvoiceDetail WHERE [InvoiceId] = @Id
+END
+GO
