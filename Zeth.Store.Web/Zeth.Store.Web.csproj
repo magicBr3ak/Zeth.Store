@@ -163,9 +163,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Report\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include=".editorconfig" />
     <None Include="packages.config" />
